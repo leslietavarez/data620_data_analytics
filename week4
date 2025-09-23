@@ -1,0 +1,75 @@
+Week Four - Assignment Centrality Measures
+
+Centrality measures can be used to predict (positive or negative) outcomes for a node.
+
+Your task in this week’s assignment is to identify an interesting set of network data that is available on the web (either through web scraping or web APIs) that could be used for analyzing and comparing centrality measures across nodes.  As an additional constraint, there should be at least one categorical variable available for each node (such as “Male” or “Female”; “Republican”, “Democrat,” or “Undecided”, etc.)
+
+In addition to identifying your data source, you should create a high level plan that describes how you would load the data for analysis, and describe a hypothetical outcome that could be predicted from comparing degree centrality across categorical groups. 
+
+For this week’s assignment, you are not required to actually load or analyze the data.  
+
+# Data Source
+API: ProPublica Congress API
+- Members of Congress (includes name, ID, state, and party affiliation).
+- Bills and cosponsors (each bill lists all members who cosponsored it).
+Alternatively: Congress.gov API has similar data.
+
+High Level Data Plan
+1. Access the Data Source
+Use the ProPublica Congress API to download information.
+Two key endpoints:
+- Members endpoint → gives you the list of all current members of Congress, including their party affiliation (categorical variable).
+- Bills endpoint → gives you bills and lists of cosponsors.
+
+2. Collect Member Data
+Request the list of members for the chosen Congress (e.g., 118th Congress).
+Store each member’s:
+- Unique ID (from the API)
+- Name
+- Party affiliation (D, R, I)
+- Chamber (House/Senate)
+This will become the node list.
+
+3. Collect Cosponsorship Data
+Request bill data (for either the House, the Senate, or both).
+For each bill:
+- Identify the sponsor and all cosponsors.
+- Record pairs of members who sponsored/cosponsored the same bill.
+This will become edge list.
+
+4. Build the Network
+Construct a graph where:
+- Nodes = members of Congress (with party as an attribute).
+- Edges = cosponsorship links between members.
+- (Optional) Edge weights = number of times two members cosponsored together.
+
+5. Clean and Prepare
+- Remove duplicate edges (if two members cosponsored many times, use weights).
+- Handle missing data (e.g., members without cosponsorship activity).
+- Verify that all nodes have a categorical variable (party affiliation) attached.
+
+6. Export for Analysis
+Save the node list and edge list in a simple format:
+- Nodes file: Member ID, Name, Party
+- Edges file: Member A, Member B, Weight
+These can be loaded into NetworkX, Gephi, or another graph analysis tool for centrality analysis.
+
+# Hypothetical Outcome:
+
+Compute degree centrality for every member of Congress in the cosponsorship network and then compare averages across parties:
+
+1. Democrats show higher average degree centrality than Republicans.
+This would mean that, in this particular Congress, Democratic members tended to cosponsor bills with a larger number of colleagues.
+Possible explanation: Democrats may have prioritized coalition-building around shared legislation, or they may have been the majority party and therefore had more opportunities to cosponsor bills.
+
+2. Republicans have a smaller number of highly central “hubs.”
+Even if the average degree centrality is lower, a few Republican members could have very high centrality.
+Interpretation: Cosponsorship activity might be concentrated in a handful of influential figures (party leaders, committee chairs) rather than broadly distributed.
+
+3. Independents (or minority parties) exhibit lower degree centrality.
+Independent members might only cosponsor selectively, leading to fewer total connections.
+This result would align with the expectation that minority or non-aligned members participate less frequently in cosponsorship networks.
+
+# Hypothetical Prediction:
+- We predict that members of the majority party will have higher average degree centrality than those in the minority party, because they are more active in bill cosponsorship and have broader opportunities to connect with colleagues.
+- Centrality gaps between parties might mirror broader political dynamics: higher polarization could reduce cross-party cosponsorship and cluster centrality by party.
